@@ -26,8 +26,6 @@ export const WorkspaceHeader: React.FC = () => {
       if (activeTool === 'merge') {
         toast.loading('Merging PDFs...', { id: 'pdf-job' });
 
-        // Ensure we have arrayBuffers for all files. 
-        // Note: files from file inputs might need to be read if arrayBuffer isn't populated.
         const buffers = await Promise.all(
           files.map(async (f) => {
             if (f.arrayBuffer) return f.arrayBuffer;
@@ -50,6 +48,57 @@ export const WorkspaceHeader: React.FC = () => {
         URL.revokeObjectURL(url);
 
         toast.success('Merge complete!', { id: 'pdf-job' });
+      } else if (activeTool === 'lock') {
+        const password = window.prompt('Enter password to encrypt the file(s):');
+        if (!password) {
+          toast.error('Operation aborted', { description: 'Password is required to lock files.' });
+          return;
+        }
+
+        toast.loading(`Encrypting ${files.length} file(s)...`, { id: 'pdf-job' });
+
+        for (const file of files) {
+          const buffer = file.arrayBuffer || await file.file?.arrayBuffer();
+          if (!buffer) continue;
+
+          const result = await processJob('PROTECT', { pdfBuffer: buffer, password });
+          
+          const blob = new Blob([result], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `locked_${file.name}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+
+        toast.success('Files encrypted successfully!', { id: 'pdf-job' });
+      } else if (activeTool === 'image-to-pdf') {
+        toast.loading(`Converting ${files.length} image(s)...`, { id: 'pdf-job' });
+
+        for (const file of files) {
+          const buffer = file.arrayBuffer || await file.file?.arrayBuffer();
+          if (!buffer) continue;
+
+          const result = await processJob('IMAGE_TO_PDF', { imageBuffer: buffer, mimeType: file.type });
+          
+          const blob = new Blob([result], { type: 'application/pdf' });
+          const url = URL.createObjectURL(blob);
+          
+          const a = document.createElement('a');
+          a.href = url;
+          const nameWithoutExt = file.name.split('.').slice(0, -1).join('.') || file.name;
+          a.download = `${nameWithoutExt}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+
+        toast.success('Images converted successfully!', { id: 'pdf-job' });
       } else {
         toast.info('Feature coming soon', { description: `The ${activeTool} tool is not fully implemented yet.` });
       }
