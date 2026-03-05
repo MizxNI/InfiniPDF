@@ -1,4 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
+import { encryptPDF } from '@pdfsmaller/pdf-encrypt-lite';
 
 /**
  * Merges multiple PDF ArrayBuffers into a single PDF document.
@@ -87,23 +88,7 @@ export async function protectPdf(pdfBuffer: ArrayBuffer, password: string): Prom
       throw new Error('No password provided.');
     }
 
-    const pdfDoc = await PDFDocument.load(pdfBuffer);
-    
-    // Encrypt the document using pdf-lib
-    pdfDoc.encrypt({
-      userPassword: password,
-      ownerPassword: password,
-      permissions: {
-        printing: 'highResolution',
-        modifying: false,
-        copying: false,
-        annotating: false,
-        fillingForms: false,
-        documentAssembly: false,
-      },
-    });
-
-    return await pdfDoc.save();
+    return await encryptPDF(new Uint8Array(pdfBuffer), password);
   } catch (error) {
     console.error('Error protecting PDF:', error);
     throw new Error(error instanceof Error ? error.message : 'Failed to protect PDF');
