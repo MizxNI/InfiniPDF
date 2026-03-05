@@ -20,7 +20,7 @@ self.onmessage = async (event: MessageEvent) => {
         break;
 
       case 'IMAGE_TO_PDF':
-        result = await imageToPdf(payload.imageBuffer, payload.mimeType);
+        result = await imageToPdf(payload.images);
         break;
 
       default:

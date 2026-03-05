@@ -77,26 +77,28 @@ export const WorkspaceHeader: React.FC = () => {
 
         toast.success('Files encrypted successfully!', { id: 'pdf-job' });
       } else if (activeTool === 'image-to-pdf') {
-        toast.loading(`Converting ${files.length} image(s)...`, { id: 'pdf-job' });
+        toast.loading(`Converting ${files.length} image(s) into a single PDF...`, { id: 'pdf-job' });
 
-        for (const file of files) {
-          const buffer = file.arrayBuffer || await file.file?.arrayBuffer();
-          if (!buffer) continue;
+        const images = await Promise.all(
+          files.map(async (f) => {
+            const buffer = f.arrayBuffer || await f.file?.arrayBuffer();
+            if (!buffer) throw new Error(`File ${f.name} missing data`);
+            return { buffer, mimeType: f.type };
+          })
+        );
 
-          const result = await processJob('IMAGE_TO_PDF', { imageBuffer: buffer, mimeType: file.type });
-          
-          const blob = new Blob([result], { type: 'application/pdf' });
-          const url = URL.createObjectURL(blob);
-          
-          const a = document.createElement('a');
-          a.href = url;
-          const nameWithoutExt = file.name.split('.').slice(0, -1).join('.') || file.name;
-          a.download = `${nameWithoutExt}.pdf`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }
+        const result = await processJob('IMAGE_TO_PDF', { images });
+        
+        const blob = new Blob([result], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `converted_images.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
 
         toast.success('Images converted successfully!', { id: 'pdf-job' });
       } else {

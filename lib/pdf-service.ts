@@ -134,42 +134,53 @@ export async function unlockPdf(pdfBuffer: ArrayBuffer, password: string): Promi
   }
 }
 
+export interface ImageInput {
+  buffer: ArrayBuffer;
+  mimeType: string;
+}
+
 /**
- * Converts an image into a PDF document.
+ * Converts one or more images into a single PDF document.
  * 
- * @param imageBuffer The ArrayBuffer of the source image.
- * @param mimeType The MIME type of the image (e.g., 'image/jpeg', 'image/png').
+ * @param images An array of objects containing the image buffer and mimeType.
  * @returns A Promise that resolves to a Uint8Array containing the new PDF.
  */
-export async function imageToPdf(imageBuffer: ArrayBuffer, mimeType: string): Promise<Uint8Array> {
+export async function imageToPdf(images: ImageInput[]): Promise<Uint8Array> {
   try {
-    if (!imageBuffer) {
-      throw new Error('No image buffer provided.');
+    if (!images || images.length === 0) {
+      throw new Error('No images provided.');
     }
 
     const pdfDoc = await PDFDocument.create();
     
-    let image;
-    if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
-      image = await pdfDoc.embedJpg(imageBuffer);
-    } else if (mimeType === 'image/png') {
-      image = await pdfDoc.embedPng(imageBuffer);
-    } else {
-      throw new Error(`Unsupported image MIME type: ${mimeType}`);
-    }
+    for (const imgData of images) {
+      let image;
+      if (imgData.mimeType === 'image/jpeg' || imgData.mimeType === 'image/jpg') {
+        image = await pdfDoc.embedJpg(imgData.buffer);
+      } else if (imgData.mimeType === 'image/png') {
+        image = await pdfDoc.embedPng(imgData.buffer);
+      } else if (imgData.mimeType === 'image/webp') {
+         // Note: pdf-lib doesn't natively support WebP embedding. 
+         // For a robust production app, we'd need to convert WebP to JPG/PNG first 
+         // using a canvas or another library. For now, we will throw an error to fail gracefully.
+         throw new Error(`Unsupported image MIME type for direct embedding: ${imgData.mimeType}. Please convert to JPG or PNG.`);
+      } else {
+        throw new Error(`Unsupported image MIME type: ${imgData.mimeType}`);
+      }
 
-    const page = pdfDoc.addPage([image.width, image.height]);
-    page.drawImage(image, {
-      x: 0,
-      y: 0,
-      width: image.width,
-      height: image.height,
-    });
+      const page = pdfDoc.addPage([image.width, image.height]);
+      page.drawImage(image, {
+        x: 0,
+        y: 0,
+        width: image.width,
+        height: image.height,
+      });
+    }
 
     return await pdfDoc.save();
   } catch (error) {
-    console.error('Error converting image to PDF:', error);
-    throw new Error(error instanceof Error ? error.message : 'Failed to convert image to PDF');
+    console.error('Error converting images to PDF:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to convert images to PDF');
   }
 }
 
