@@ -15,10 +15,10 @@
 - [ ] Implement Zustand middleware for `IndexedDB` persistence (optional but recommended for local-first)
 
 ## Phase 3: Dashboard & Upload UI
-- [ ] Build `DashboardContainer` grid layout
+- [x] Build `DashboardContainer` grid layout
 - [x] Create `ToolCard` component with hover effects and icons for each PDF operation
-- [ ] Build `GlobalUploadModal` using shadcn `Dialog`
-- [ ] Implement `DropZone` using `react-dropzone` with file type validation (PDF, Images)
+- [x] Build `GlobalUploadModal` using shadcn `Dialog`
+- [x] Implement `DropZone` using `react-dropzone` with file type validation (PDF, Images)
 - [ ] Build `FileListItem` with status indicators (Idle, Processing, Completed)
 - [ ] Connect `BrowseButton` to the hidden file input trigger
 - [ ] Implement `DeleteButton` logic to remove files from `useFileStore`
