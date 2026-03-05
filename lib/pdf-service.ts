@@ -70,3 +70,121 @@ export async function splitPdf(pdfBuffer: ArrayBuffer, pageIndices: number[]): P
     throw new Error(error instanceof Error ? error.message : 'Failed to split PDF');
   }
 }
+
+/**
+ * Protects a PDF document with a password.
+ * 
+ * @param pdfBuffer The ArrayBuffer of the source PDF.
+ * @param password The password to encrypt the PDF with.
+ * @returns A Promise that resolves to a Uint8Array containing the encrypted PDF.
+ */
+export async function protectPdf(pdfBuffer: ArrayBuffer, password: string): Promise<Uint8Array> {
+  try {
+    if (!pdfBuffer) {
+      throw new Error('No PDF buffer provided for protection.');
+    }
+    if (!password) {
+      throw new Error('No password provided.');
+    }
+
+    const pdfDoc = await PDFDocument.load(pdfBuffer);
+    
+    // Encrypt the document using pdf-lib
+    pdfDoc.encrypt({
+      userPassword: password,
+      ownerPassword: password,
+      permissions: {
+        printing: 'highResolution',
+        modifying: false,
+        copying: false,
+        annotating: false,
+        fillingForms: false,
+        documentAssembly: false,
+      },
+    });
+
+    return await pdfDoc.save();
+  } catch (error) {
+    console.error('Error protecting PDF:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to protect PDF');
+  }
+}
+
+/**
+ * Unlocks a password-protected PDF document.
+ * 
+ * @param pdfBuffer The ArrayBuffer of the protected PDF.
+ * @param password The password to decrypt the PDF.
+ * @returns A Promise that resolves to a Uint8Array containing the unlocked PDF.
+ */
+export async function unlockPdf(pdfBuffer: ArrayBuffer, password: string): Promise<Uint8Array> {
+  try {
+    if (!pdfBuffer) {
+      throw new Error('No PDF buffer provided for unlocking.');
+    }
+
+    // Load the document with the password
+    const pdfDoc = await PDFDocument.load(pdfBuffer, { password });
+    
+    // Save it without encryption
+    return await pdfDoc.save();
+  } catch (error) {
+    console.error('Error unlocking PDF:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to unlock PDF. Incorrect password?');
+  }
+}
+
+/**
+ * Converts an image into a PDF document.
+ * 
+ * @param imageBuffer The ArrayBuffer of the source image.
+ * @param mimeType The MIME type of the image (e.g., 'image/jpeg', 'image/png').
+ * @returns A Promise that resolves to a Uint8Array containing the new PDF.
+ */
+export async function imageToPdf(imageBuffer: ArrayBuffer, mimeType: string): Promise<Uint8Array> {
+  try {
+    if (!imageBuffer) {
+      throw new Error('No image buffer provided.');
+    }
+
+    const pdfDoc = await PDFDocument.create();
+    
+    let image;
+    if (mimeType === 'image/jpeg' || mimeType === 'image/jpg') {
+      image = await pdfDoc.embedJpg(imageBuffer);
+    } else if (mimeType === 'image/png') {
+      image = await pdfDoc.embedPng(imageBuffer);
+    } else {
+      throw new Error(`Unsupported image MIME type: ${mimeType}`);
+    }
+
+    const page = pdfDoc.addPage([image.width, image.height]);
+    page.drawImage(image, {
+      x: 0,
+      y: 0,
+      width: image.width,
+      height: image.height,
+    });
+
+    return await pdfDoc.save();
+  } catch (error) {
+    console.error('Error converting image to PDF:', error);
+    throw new Error(error instanceof Error ? error.message : 'Failed to convert image to PDF');
+  }
+}
+
+/**
+ * Renames a file by appending a suffix before the extension.
+ * 
+ * @param filename The original filename.
+ * @param suffix The suffix to append (e.g., '_merged').
+ * @returns The new filename.
+ */
+export function renameFile(filename: string, suffix: string): string {
+  const lastDotIndex = filename.lastIndexOf('.');
+  if (lastDotIndex === -1) {
+    return `${filename}${suffix}.pdf`;
+  }
+  const name = filename.substring(0, lastDotIndex);
+  return `${name}${suffix}.pdf`;
+}
