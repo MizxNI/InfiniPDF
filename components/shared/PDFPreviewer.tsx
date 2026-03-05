@@ -15,7 +15,8 @@ export const PDFPreviewer: React.FC<PDFPreviewerProps> = ({ file }) => {
       return;
     }
 
-    const url = URL.createObjectURL(file);
+    const blob = new Blob([file], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
     setPreviewUrl(url);
 
     return () => {
@@ -32,10 +33,12 @@ export const PDFPreviewer: React.FC<PDFPreviewerProps> = ({ file }) => {
   }
 
   return (
-    <iframe
-      src={previewUrl}
+    <object 
+      data={previewUrl} 
+      type="application/pdf" 
       className="w-full h-[600px] rounded-lg border border-zinc-800"
-      title="PDF Preview"
-    />
+    >
+      <p>Your browser does not support PDFs. <a href={previewUrl} className="text-blue-400 hover:underline">Download the PDF</a>.</p>
+    </object>
   );
 };

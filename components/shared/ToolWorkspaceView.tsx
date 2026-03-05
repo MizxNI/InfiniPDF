@@ -38,7 +38,7 @@ export const ToolWorkspaceView: React.FC = () => {
               Add Files
             </Button>
           </div>
-        ) : activeTool === 'merge' ? (
+        ) : activeTool === 'merge' || activeTool === 'reorder' ? (
           <ReorderableGrid items={files} onReorder={reorderFiles} />
         ) : activeTool === 'split' || activeTool === 'delete' ? (
           <PDFPreviewer file={files[0].file} />
