@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useFileStore } from '@/store/useFileStore';
 import { CloudUpload } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const DropZone: React.FC = () => {
   const addFiles = useFileStore((state) => state.addFiles);
@@ -9,6 +10,7 @@ export const DropZone: React.FC = () => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
       addFiles(acceptedFiles);
+      toast.success(`Successfully added ${acceptedFiles.length} file${acceptedFiles.length === 1 ? '' : 's'}`);
     }
   }, [addFiles]);
 

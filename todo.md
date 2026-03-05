@@ -19,9 +19,9 @@
 - [x] Create `ToolCard` component with hover effects and icons for each PDF operation
 - [x] Build `GlobalUploadModal` using shadcn `Dialog`
 - [x] Implement `DropZone` using `react-dropzone` with file type validation (PDF, Images)
-- [ ] Build `FileListItem` with status indicators (Idle, Processing, Completed)
-- [ ] Connect `BrowseButton` to the hidden file input trigger
-- [ ] Implement `DeleteButton` logic to remove files from `useFileStore`
+- [x] Build `FileListItem` with status indicators (Idle, Processing, Completed)
+- [x] Connect `BrowseButton` to the hidden file input trigger
+- [x] Implement `DeleteButton` logic to remove files from `useFileStore`
 
 ## Phase 4: PDF Processing Engine (Local-First)
 - [ ] Create a `pdf-service.ts` utility wrapper for `pdf-lib` operations
