@@ -2,12 +2,65 @@
 
 import React from 'react';
 import { useToolStore } from '@/store/useToolStore';
+import { useFileStore } from '@/store/useFileStore';
+import { usePDFWorker } from '@/hooks/usePDFWorker';
 import { ArrowLeft, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export const WorkspaceHeader: React.FC = () => {
   const activeTool = useToolStore((state) => state.activeTool);
   const setActiveTool = useToolStore((state) => state.setActiveTool);
+  const files = useFileStore((state) => state.files);
+  const { processJob } = usePDFWorker();
+
+  const handleProcess = async () => {
+    if (!activeTool) return;
+
+    if (files.length === 0) {
+      toast.error('No files selected', { description: 'Please add files to process.' });
+      return;
+    }
+
+    try {
+      if (activeTool === 'merge') {
+        toast.loading('Merging PDFs...', { id: 'pdf-job' });
+
+        // Ensure we have arrayBuffers for all files. 
+        // Note: files from file inputs might need to be read if arrayBuffer isn't populated.
+        const buffers = await Promise.all(
+          files.map(async (f) => {
+            if (f.arrayBuffer) return f.arrayBuffer;
+            if (f.file) return await f.file.arrayBuffer();
+            throw new Error(`File ${f.name} missing data`);
+          })
+        );
+
+        const result = await processJob('MERGE', { pdfBuffers: buffers });
+
+        const blob = new Blob([result], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'merged_document.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        toast.success('Merge complete!', { id: 'pdf-job' });
+      } else {
+        toast.info('Feature coming soon', { description: `The ${activeTool} tool is not fully implemented yet.` });
+      }
+    } catch (error: any) {
+      console.error(`Error processing ${activeTool}:`, error);
+      toast.error('Processing failed', { 
+        id: 'pdf-job', 
+        description: error.message || 'An unexpected error occurred.' 
+      });
+    }
+  };
 
   if (!activeTool) return null;
 
@@ -27,7 +80,9 @@ export const WorkspaceHeader: React.FC = () => {
         </h2>
       </div>
       <Button
-        className="bg-zinc-100 text-zinc-900 hover:bg-zinc-300 font-medium"
+        onClick={handleProcess}
+        className="bg-zinc-100 text-zinc-900 hover:bg-zinc-300 font-medium disabled:opacity-50"
+        disabled={files.length === 0}
       >
         <Play className="w-4 h-4 mr-2" />
         Process
