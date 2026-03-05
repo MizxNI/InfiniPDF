@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useToolStore } from '@/store/useToolStore';
 import { ToolCard } from './ToolCard';

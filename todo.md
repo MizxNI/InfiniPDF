@@ -33,8 +33,8 @@
 - [ ] **Crucial:** Setup a Web Worker to handle these operations to prevent UI freezing
 
 ## Phase 5: Workspace & Interaction
-- [ ] Build `ToolWorkspaceView` layout (conditional rendering based on `activeTool`)
-- [ ] Implement `WorkspaceHeader` with breadcrumbs and "Download All" action
+- [x] Build `ToolWorkspaceView` layout (conditional rendering based on `activeTool`)
+- [x] Implement `WorkspaceHeader` with breadcrumbs and "Download All" action
 - [ ] Integrate `dnd-kit` into `ReorderableGrid` for page/file reordering
 - [ ] Create `PDFPreviewer` using `URL.createObjectURL` and a canvas/iframe fallback
 - [ ] Implement `ProcessingOverlay` with a blur effect

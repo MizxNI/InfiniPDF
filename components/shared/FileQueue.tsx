@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { useFileStore } from '@/store/useFileStore';
 import { Trash2, File as FileIcon, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
