@@ -16,7 +16,7 @@
 
 ## Phase 3: Dashboard & Upload UI
 - [ ] Build `DashboardContainer` grid layout
-- [ ] Create `ToolCard` component with hover effects and icons for each PDF operation
+- [x] Create `ToolCard` component with hover effects and icons for each PDF operation
 - [ ] Build `GlobalUploadModal` using shadcn `Dialog`
 - [ ] Implement `DropZone` using `react-dropzone` with file type validation (PDF, Images)
 - [ ] Build `FileListItem` with status indicators (Idle, Processing, Completed)
