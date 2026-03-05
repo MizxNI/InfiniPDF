@@ -37,19 +37,19 @@ const tools: ToolDefinition[] = [
     title: 'Reorder Pages',
     description: 'Change the order of pages within your PDF document.',
     icon: ArrowUpDown,
-    type: 'organize',
+    type: 'reorder',
   },
   {
     title: 'Delete Pages',
     description: 'Remove unwanted pages from your PDF document.',
     icon: FileMinus,
-    type: 'organize', // Uses the organize tool internally
+    type: 'delete',
   },
   {
     title: 'Password Protect',
     description: 'Add a password to encrypt and secure your PDF.',
     icon: Lock,
-    type: 'lock',
+    type: 'protect',
   },
   {
     title: 'Image to PDF',
