@@ -7,6 +7,7 @@ interface FileState {
   removeFile: (id: string) => void;
   updateFileStatus: (id: string, status: FileStatus) => void;
   clearAll: () => void;
+  reorderFiles: (newFiles: LocalFile[]) => void;
 }
 
 export const useFileStore = create<FileState>((set) => ({
@@ -37,5 +38,6 @@ export const useFileStore = create<FileState>((set) => ({
       if (file.previewUrl) URL.revokeObjectURL(file.previewUrl);
     });
     return { files: [] };
-  })
+  }),
+  reorderFiles: (newFiles) => set({ files: newFiles })
 }));

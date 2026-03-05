@@ -3,14 +3,18 @@
 import React from 'react';
 import { useFileStore } from '@/store/useFileStore';
 import { useUIStore } from '@/store/useUIStore';
+import { useToolStore } from '@/store/useToolStore';
 import { WorkspaceHeader } from './WorkspaceHeader';
 import { FileQueue } from './FileQueue';
+import { ReorderableGrid } from './ReorderableGrid';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export const ToolWorkspaceView: React.FC = () => {
   const files = useFileStore((state) => state.files);
+  const reorderFiles = useFileStore((state) => state.reorderFiles);
   const toggleUploadModal = useUIStore((state) => state.toggleUploadModal);
+  const activeTool = useToolStore((state) => state.activeTool);
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -33,6 +37,8 @@ export const ToolWorkspaceView: React.FC = () => {
               Add Files
             </Button>
           </div>
+        ) : activeTool === 'merge' ? (
+          <ReorderableGrid items={files} onReorder={reorderFiles} />
         ) : (
           <FileQueue />
         )}
