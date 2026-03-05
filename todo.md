@@ -1,7 +1,7 @@
 # Implementation Roadmap: PDF Toolkit WebApp
 
 ## Phase 1: Project Foundation
-- [ ] Initialize Next.js 14+ Project (App Router, TypeScript, Tailwind CSS)
+- [x] Initialize Next.js 14+ Project (App Router, TypeScript, Tailwind CSS)
 - [ ] Install Core Dependencies: `zustand`, `pdf-lib`, `react-dropzone`, `dnd-kit`, `lucide-react`, `clsx`, `tailwind-merge`
 - [ ] Initialize shadcn/ui CLI and install base components: `Button`, `Card`, `Dialog`, `ScrollArea`, `Toast`
 - [ ] Configure Dark Mode as the default theme in `globals.css` and `tailwind.config.ts`
