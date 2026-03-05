@@ -4,14 +4,14 @@
 - [x] Initialize Next.js 14+ Project (App Router, TypeScript, Tailwind CSS)
 - [x] Install Core Dependencies: `zustand`, `pdf-lib`, `react-dropzone`, `dnd-kit`, `lucide-react`, `clsx`, `tailwind-merge`
 - [x] Initialize shadcn/ui CLI and install base components: `Button`, `Card`, `Dialog`, `ScrollArea`, `Toast`
-- [ ] Configure Dark Mode as the default theme in `globals.css` and `tailwind.config.ts`
-- [ ] Create folder structure: `/components/ui`, `/components/shared`, `/store`, `/lib`, `/workers`, `/hooks`
+- [x] Configure Dark Mode as the default theme in `globals.css` and `tailwind.config.ts`
+- [x] Create folder structure: `/components/ui`, `/components/shared`, `/store`, `/lib`, `/workers`, `/hooks`
 
 ## Phase 2: State Management (Zustand)
-- [ ] Define `LocalFile` and `ToolType` types in a shared types file
-- [ ] Create `useFileStore.ts` with `files` array and `addFiles/removeFile` actions
-- [ ] Create `useToolStore.ts` with `activeTool` and `isProcessing` state
-- [ ] Create `useUIStore.ts` for modal toggles and tip cycling logic
+- [x] Define `LocalFile` and `ToolType` types in a shared types file
+- [x] Create `useFileStore.ts` with `files` array and `addFiles/removeFile` actions
+- [x] Create `useToolStore.ts` with `activeTool` and `isProcessing` state
+- [x] Create `useUIStore.ts` for modal toggles and tip cycling logic
 - [ ] Implement Zustand middleware for `IndexedDB` persistence (optional but recommended for local-first)
 
 ## Phase 3: Dashboard & Upload UI
