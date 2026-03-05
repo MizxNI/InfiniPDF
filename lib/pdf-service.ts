@@ -155,17 +155,23 @@ export async function imageToPdf(images: ImageInput[]): Promise<Uint8Array> {
     
     for (const imgData of images) {
       let image;
-      if (imgData.mimeType === 'image/jpeg' || imgData.mimeType === 'image/jpg') {
-        image = await pdfDoc.embedJpg(imgData.buffer);
-      } else if (imgData.mimeType === 'image/png') {
+      const mime = (imgData.mimeType || '').toLowerCase();
+
+      if (mime.includes('png')) {
         image = await pdfDoc.embedPng(imgData.buffer);
-      } else if (imgData.mimeType === 'image/webp') {
-         // Note: pdf-lib doesn't natively support WebP embedding. 
-         // For a robust production app, we'd need to convert WebP to JPG/PNG first 
-         // using a canvas or another library. For now, we will throw an error to fail gracefully.
-         throw new Error(`Unsupported image MIME type for direct embedding: ${imgData.mimeType}. Please convert to JPG or PNG.`);
+      } else if (mime.includes('jpg') || mime.includes('jpeg')) {
+        image = await pdfDoc.embedJpg(imgData.buffer);
       } else {
-        throw new Error(`Unsupported image MIME type: ${imgData.mimeType}`);
+        // Fallback for empty or unrecognized MIME types
+        try {
+          image = await pdfDoc.embedJpg(imgData.buffer);
+        } catch (jpgError) {
+          try {
+            image = await pdfDoc.embedPng(imgData.buffer);
+          } catch (pngError) {
+            throw new Error(`Unsupported image format or corrupted data. Could not embed image.`);
+          }
+        }
       }
 
       const page = pdfDoc.addPage([image.width, image.height]);
