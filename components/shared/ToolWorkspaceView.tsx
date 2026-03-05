@@ -7,6 +7,7 @@ import { useToolStore } from '@/store/useToolStore';
 import { WorkspaceHeader } from './WorkspaceHeader';
 import { FileQueue } from './FileQueue';
 import { ReorderableGrid } from './ReorderableGrid';
+import { PDFPreviewer } from './PDFPreviewer';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
@@ -39,6 +40,8 @@ export const ToolWorkspaceView: React.FC = () => {
           </div>
         ) : activeTool === 'merge' ? (
           <ReorderableGrid items={files} onReorder={reorderFiles} />
+        ) : activeTool === 'split' || activeTool === 'delete' ? (
+          <PDFPreviewer file={files[0].file} />
         ) : (
           <FileQueue />
         )}

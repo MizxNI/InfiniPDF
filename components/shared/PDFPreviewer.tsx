@@ -3,26 +3,25 @@
 import React, { useState, useEffect } from 'react';
 
 interface PDFPreviewerProps {
-  fileBuffer: ArrayBuffer | null;
+  file: File | null;
 }
 
-export const PDFPreviewer: React.FC<PDFPreviewerProps> = ({ fileBuffer }) => {
+export const PDFPreviewer: React.FC<PDFPreviewerProps> = ({ file }) => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!fileBuffer) {
+    if (!file) {
       setPreviewUrl(null);
       return;
     }
 
-    const blob = new Blob([fileBuffer], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
+    const url = URL.createObjectURL(file);
     setPreviewUrl(url);
 
     return () => {
       URL.revokeObjectURL(url);
     };
-  }, [fileBuffer]);
+  }, [file]);
 
   if (!previewUrl) {
     return (
