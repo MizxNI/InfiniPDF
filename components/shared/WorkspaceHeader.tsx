@@ -48,7 +48,7 @@ export const WorkspaceHeader: React.FC = () => {
         URL.revokeObjectURL(url);
 
         toast.success('Merge complete!', { id: 'pdf-job' });
-      } else if (activeTool === 'lock') {
+      } else if (activeTool === 'protect') {
         const password = window.prompt('Enter password to encrypt the file(s):');
         if (!password) {
           toast.error('Operation aborted', { description: 'Password is required to lock files.' });

@@ -3,11 +3,10 @@ export type FileStatus = 'idle' | 'processing' | 'completed' | 'error';
 export type ToolType = 
   | 'merge' 
   | 'split' 
-  | 'compress' 
-  | 'pdf-to-image' 
+  | 'delete' 
   | 'image-to-pdf' 
-  | 'organize' 
-  | 'lock' 
+  | 'reorder' 
+  | 'protect' 
   | 'unlock';
 
 export interface LocalFile {
